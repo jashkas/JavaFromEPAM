@@ -30,6 +30,7 @@ public class VariableB {
         sortFrequency(numbers);
         findHappyNumbers(numbers);
         checkPalindromeNumbers(numbers);
+        halfSumNeighbors(numbers);
     }
 
 
@@ -271,5 +272,16 @@ public class VariableB {
     }
 
     // 11. Элементы, которые равны полусумме соседних элементов
+    public static void halfSumNeighbors(int[] numbers) {
+        List<Integer> halfSum = new ArrayList<>();
+
+        for (int i = 1; i < numbers.length - 1; i++) {
+            // Проверка, равен ли текущий элемент полусумме соседних
+            if (numbers[i] == (numbers[i - 1] + numbers[i + 1]) / 2) {
+                halfSum.add(numbers[i]);
+            }
+        }
+        System.out.println("Элементы, равные полусумме соседних элементов: " + halfSum);
+    }
 
 }

@@ -28,6 +28,7 @@ public class VariableB {
         findPrimeNumbers(numbers);
         sortedNumbers(numbers);
         sortFrequency(numbers);
+        findHappyNumbers(numbers);
     }
 
 
@@ -44,11 +45,11 @@ public class VariableB {
             }
         }
 
-        // определяем массивы для хранения четных и нечетных чисел
+        // определение массивов для хранения четных и нечетных чисел
         int[] evens = new int[count_even];
         int[] odds = new int[count_odd];
 
-        // заполняем массивы
+        // заполнение массивов
         int i = 0;
         int iEven = 0;
         int iOdd = 0;
@@ -63,7 +64,7 @@ public class VariableB {
             i++;
         }
 
-        // выводим результат
+        // вывод результата
         System.out.print("Четные числа: ");
         for (int num: evens) {
             System.out.print(num + " ");
@@ -96,7 +97,8 @@ public class VariableB {
 
         for (int num : numbers) {
             if (num % 3 == 0 || num % 9 == 0) {
-                divisible.add(num);
+                if (!divisible.contains(num))
+                    divisible.add(num);
             }
         }
         System.out.println("Числа, делящиеся на 3 или на 9: " + divisible + "\n");
@@ -108,7 +110,8 @@ public class VariableB {
 
         for (int num : numbers) {
             if (num % 5 == 0 && num % 7 == 0) {
-                divisible.add(num);
+                if (!divisible.contains(num))
+                    divisible.add(num);
             }
         }
         System.out.println("Числа, делящиеся на 5 и 7: " + divisible + "\n");
@@ -132,7 +135,7 @@ public class VariableB {
                 }
             }
         }
-        System.out.println("Трехзначные числа с уникальными цифрами: " + uniqueThreeDigit);
+        System.out.println("Трехзначные числа с уникальными цифрами: " + uniqueThreeDigit + "\n");
     }
 
     // 6. Простые числа.
@@ -147,16 +150,16 @@ public class VariableB {
         System.out.println("Простые числа: " + primes + "\n");
     }
     public static boolean isPrime(int num) {
-        if (num < 2) return false; // Числа меньше 2 не являются простыми
+        if (num < 2) return false; // числа меньше 2 не являются простыми
         for (int i = 2; i <= Math.sqrt(num); i++) {
-            if (num % i == 0) return false; // Если делится на i, то не простое
+            if (num % i == 0) return false; // если делится на i, то не простое
         }
-        return true; // Простое число
+        return true; // простое число
     }
 
     // 7. Отсортированные числа в порядке возрастания и убывания.
     public static void sortedNumbers(int[] numbers) {
-        // Сортировка по возрастанию через простую сортировку вставками
+        // сортировка по возрастанию через простую сортировку вставками
         int[] sortedAsc = Arrays.copyOf(numbers, numbers.length);
         for (int i = 1; i < sortedAsc.length; i++) {
             int key = sortedAsc[i];
@@ -168,38 +171,30 @@ public class VariableB {
             sortedAsc[j + 1] = key;
         }
 
-        // Сортировка по убыванию
+        // сортировка по убыванию
         int[] sortedDesc = new int[sortedAsc.length];
         for (int i = 0; i < sortedAsc.length; i++) {
             sortedDesc[i] = sortedAsc[sortedAsc.length - 1 - i];
         }
 
-        // Вывод результатов
+        // вывод результатов
         System.out.println("Числа в порядке возрастания: " + Arrays.toString(sortedAsc));
         System.out.println("Числа в порядке убывания: " + Arrays.toString(sortedDesc) + "\n");
     }
 
-
-
-
-
-
     // 8. Числа в порядке убывания частоты встречаемости чисел.
     public static void sortFrequency(int[] numbers) {
-        // Определим максимальное количество уникальных элементов
-        int maxUniqueCount = 0;
+        int maxUniqueCount = 0;  // максимальное количество уникальных элементов
+        List<Integer> uniqueNumbers = new ArrayList<>();  // список для хранения уникальных чисел
 
-        // Создаем список для хранения уникальных чисел
-        List<Integer> uniqueNumbers = new ArrayList<>();
-
-        // Подсчитываем уникальные элементы и добавляем их в список
+        // подсчитывает уникальные элементы и добавляет их в список
         for (int num : numbers) {
             if (!uniqueNumbers.contains(num)) {
                 uniqueNumbers.add(num);
             }
         }
 
-        // Сортируем уникальные числа по частоте
+        // сортируем уникальные числа по частоте
         for (int i = 0; i < uniqueNumbers.size(); i++) {
             for (int j = i + 1; j < uniqueNumbers.size(); j++) {
                 if (countFrequency(numbers, uniqueNumbers.get(i)) < countFrequency(numbers, uniqueNumbers.get(j))) {
@@ -211,16 +206,9 @@ public class VariableB {
             }
         }
 
-        // Выводим числа в порядке убывания частоты
-        for (int num : uniqueNumbers) {
-            int frequency = countFrequency(numbers, num);
-            for (int i = 0; i < frequency; i++) {
-                System.out.print(num + " ");
-            }
-        }
-
-        System.out.println("Числа в порядке убывания частоты встречаемости: " + sortedByFrequency);
+        System.out.println("Числа в порядке убывания частоты встречаемости: " + uniqueNumbers + "\n");
     }
+    // подсчет частоты
     private static int countFrequency(int[] nums, int num) {
         int count = 0;
         for (int n : nums) {
@@ -232,6 +220,36 @@ public class VariableB {
     }
 
     // 9. «Счастливые» числа
+    public static void findHappyNumbers(int[] numbers) {
+        List<Integer> happyNumbers = new ArrayList<>();
+        for (int currentNumber: numbers) {
+            int tempNumber = currentNumber;
+            List<Integer> seenNumbers = new ArrayList<>();
+
+            // Определяем, является ли число счастливым
+            while (tempNumber != 1 && !seenNumbers.contains(tempNumber)) {
+                seenNumbers.add(tempNumber);
+                tempNumber = sumOfSquaresOfDigits(tempNumber);
+            }
+
+            if (tempNumber == 1) {
+                if (!happyNumbers.contains(currentNumber))
+                    happyNumbers.add(currentNumber);
+            }
+        }
+        System.out.println("Счастливые числа: " + happyNumbers + "\n");
+    }
+    // вычисление суммы квадратов цифр числа
+    private static int sumOfSquaresOfDigits(int number) {
+        int sum = 0;
+        while (number > 0) {
+            int digit = number % 10;
+            sum += digit * digit;
+            number /= 10;
+        }
+        return sum;
+    }
+
     // 10. Числа-палиндромы, значения которых в прямом и обратном порядке совпадают.
     // 11. Элементы, которые равны полусумме соседних элементов
 

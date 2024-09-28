@@ -29,6 +29,7 @@ public class VariableB {
         sortedNumbers(numbers);
         sortFrequency(numbers);
         findHappyNumbers(numbers);
+        checkPalindromeNumbers(numbers);
     }
 
 
@@ -184,7 +185,6 @@ public class VariableB {
 
     // 8. Числа в порядке убывания частоты встречаемости чисел.
     public static void sortFrequency(int[] numbers) {
-        int maxUniqueCount = 0;  // максимальное количество уникальных элементов
         List<Integer> uniqueNumbers = new ArrayList<>();  // список для хранения уникальных чисел
 
         // подсчитывает уникальные элементы и добавляет их в список
@@ -251,6 +251,25 @@ public class VariableB {
     }
 
     // 10. Числа-палиндромы, значения которых в прямом и обратном порядке совпадают.
+    public static void checkPalindromeNumbers(int[] numbers) {
+        List<Integer> palindromes = new ArrayList<>();
+        for (int num: numbers) {
+            String default_num = Integer.toString(num);
+            // если длина числа более одной цифры
+            if (default_num.length() > 1) {
+                // переворачиваем число
+                String reverse_num = new StringBuilder(default_num).reverse().toString();
+                // и сравниваем
+                if (default_num.equals(reverse_num))
+                    // если такого же числа нет
+                    if (!palindromes.contains(num))
+                        // то добавляем в список
+                        palindromes.add(num);
+            }
+        }
+        System.out.println("Числа-палиндромы: " + palindromes + "\n");
+    }
+
     // 11. Элементы, которые равны полусумме соседних элементов
 
 }

@@ -1,4 +1,4 @@
-package chapter3;
+package chapter3.VariableA;
 
 import java.math.BigInteger;
 import java.util.Date;

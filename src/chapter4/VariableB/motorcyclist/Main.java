@@ -1,6 +1,6 @@
 package chapter4.VariableB.motorcyclist;
 
-import chapter4.VariableB.motorcyclist.gear.*;
+import chapter4.VariableB.motorcyclist.ammunition.*;
 
 import java.util.List;
 import java.util.Scanner;

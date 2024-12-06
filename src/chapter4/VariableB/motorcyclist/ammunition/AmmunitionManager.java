@@ -1,4 +1,4 @@
-package chapter4.VariableB.motorcyclist.gear;
+package chapter4.VariableB.motorcyclist.ammunition;
 
 import chapter4.VariableB.motorcyclist.utils.AmmunitionReader;
 

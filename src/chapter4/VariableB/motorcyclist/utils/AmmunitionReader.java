@@ -1,9 +1,9 @@
 package chapter4.VariableB.motorcyclist.utils;
 
-import chapter4.VariableB.motorcyclist.gear.ClothingAmmunition;
-import chapter4.VariableB.motorcyclist.gear.DefensiveAmmunition;
-import chapter4.VariableB.motorcyclist.gear.AmmunitionBase;
-import chapter4.VariableB.motorcyclist.gear.SpecialAmmunition;
+import chapter4.VariableB.motorcyclist.ammunition.ClothingAmmunition;
+import chapter4.VariableB.motorcyclist.ammunition.DefensiveAmmunition;
+import chapter4.VariableB.motorcyclist.ammunition.AmmunitionBase;
+import chapter4.VariableB.motorcyclist.ammunition.SpecialAmmunition;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

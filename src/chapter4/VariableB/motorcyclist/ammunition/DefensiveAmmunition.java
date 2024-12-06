@@ -1,4 +1,4 @@
-package chapter4.VariableB.motorcyclist.gear;
+package chapter4.VariableB.motorcyclist.ammunition;
 
 public class DefensiveAmmunition extends AmmunitionBase {
     public DefensiveAmmunition(String name, double price, double weight) {

@@ -38,7 +38,6 @@ public class Computer {
     public void checkForViruses() {
         if (isOn) {
             System.out.println("Проверка компьютера на вирусы...");
-            // Здесь могла бы быть реализация антивирусной проверки
             System.out.println("Проверка завершена. Вирусы не обнаружены.");
         } else {
             System.out.println("Компьютер выключен. Включите его для проверки на вирусы.");

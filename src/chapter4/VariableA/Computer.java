@@ -7,12 +7,39 @@ public class Computer {
     private CPU cpu;
     private boolean isOn = false;
 
+    public HardDrive getHardDrive() {
+        return hardDrive;
+    }
+    public DiskDrive getDiskDrive() {
+        return diskDrive;
+    }
+    public RAM getRam() {
+        return ram;
+    }
+    public CPU getCpu() {
+        return cpu;
+    }
+
+    public void setHardDrive(HardDrive hardDrive) {
+        this.hardDrive = hardDrive;
+    }
+    public void setDiskDrive(DiskDrive diskDrive) {
+        this.diskDrive = diskDrive;
+    }
+    public void setRam(RAM ram) {
+        this.ram = ram;
+    }
+    public void setCpu(CPU cpu) {
+        this.cpu = cpu;
+    }
+
     public Computer(HardDrive hardDrive, DiskDrive diskDrive, RAM ram, CPU cpu) {
         this.hardDrive = hardDrive;
         this.diskDrive = diskDrive;
         this.ram = ram;
         this.cpu = cpu;
     }
+
 
     // Метод включения компьютера
     public void turnOn() {

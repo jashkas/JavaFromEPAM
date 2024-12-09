@@ -10,6 +10,20 @@ public abstract class Component {
         this.model = model;
     }
 
+    public String getManufacturer() {
+        return manufacturer;
+    }
+    public String getModel() {
+        return model;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

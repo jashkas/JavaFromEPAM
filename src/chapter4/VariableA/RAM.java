@@ -12,6 +12,10 @@ public class RAM extends Component {
         return capacityGB;
     }
 
+    public void setCapacityGB(int capacityGB) {
+        this.capacityGB = capacityGB;
+    }
+
     @Override
     public String toString() {
         return "RAM{" +

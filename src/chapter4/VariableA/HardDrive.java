@@ -11,6 +11,9 @@ public class HardDrive extends Component{
     public int getSizeGB() {
         return sizeGB;
     }
+    public void setSizeGB(int sizeGB) {
+        this.sizeGB = sizeGB;
+    }
 
     @Override
     public String toString() {

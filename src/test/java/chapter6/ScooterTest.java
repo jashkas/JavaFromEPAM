@@ -25,7 +25,7 @@ public class ScooterTest {
         scooter.setOwner("Alice Johnson");
         scooter.setPowerSource("Battery");
 
-        // Redirect System.out to our ByteArrayOutputStream
+        // Перенаправляем System.out на наш ByteArrayOutputStream
         System.setOut(new PrintStream(outContent));
     }
 

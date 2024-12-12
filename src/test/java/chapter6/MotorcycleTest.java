@@ -25,7 +25,7 @@ public class MotorcycleTest {
         motorcycle.setOwner("Jane Smith");
         motorcycle.setPowerSource("Gasoline");
 
-        // Redirect System.out to our ByteArrayOutputStream
+        // Перенаправляем System.out на наш ByteArrayOutputStream
         System.setOut(new PrintStream(outContent));
     }
 

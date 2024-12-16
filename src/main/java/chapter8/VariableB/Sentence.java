@@ -17,9 +17,9 @@ public class Sentence {
     }
 
     public static List<Sentence> parseSentences(String text) {
-        // Регулярное выражение для поиска окончания предложений
-        // рассматривает ".", "!" и "?" как окончания предложений.
-        String sentenceRegex = "[^.!?]+[.!?]";
+        // Регулярное выражение рассматривает ".", "!" и "?" как окончания предложений
+        // и незавершенные предложения
+        String sentenceRegex = "[^.!?]+(?:[.!?]|$)";
         Pattern pattern = Pattern.compile(sentenceRegex);
         Matcher matcher = pattern.matcher(text);
 
@@ -29,6 +29,15 @@ public class Sentence {
             String sentenceText = matcher.group().trim();
             // Проверяем, что предложение не пустое, и парсим его на слова
             if (!sentenceText.isEmpty()) {
+                // Проверяем и добавляем точку в конце, если её нет
+                if (!sentenceText.endsWith(".") && !sentenceText.endsWith("!") && !sentenceText.endsWith("?")) {
+                    sentenceText += ".";
+                }
+                // Приводим первую букву к заглавной
+                char firstChar = sentenceText.charAt(0);
+                if (Character.isLowerCase(firstChar)) {
+                    sentenceText = Character.toUpperCase(firstChar) + sentenceText.substring(1);
+                }
                 sentences.add(new Sentence(Word.parseWords(sentenceText)));
             }
         }

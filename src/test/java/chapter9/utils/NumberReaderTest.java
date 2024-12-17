@@ -1,5 +1,6 @@
-package chapter9;
+package chapter9.utils;
 
+import chapter9.ProcessingException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,6 @@
-package chapter9;
+package chapter9.utils;
+
+import chapter9.ProcessingException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -6,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class NumberReader {
     public static Double[] readFile(String filePath) throws ProcessingException {

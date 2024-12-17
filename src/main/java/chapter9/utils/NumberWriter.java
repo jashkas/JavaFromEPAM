@@ -1,4 +1,4 @@
-package chapter9;
+package chapter9.utils;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

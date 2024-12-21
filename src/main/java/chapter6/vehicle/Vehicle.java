@@ -1,29 +1,50 @@
 package chapter6.vehicle;
 
-public interface Vehicle {
-    String getRegistrationNumber();
-    void setRegistrationNumber(String registrationNumber);
+public abstract class Vehicle implements IVehicle {
+    private String registrationNumber;
+    private String brand;
+    private String model;
+    private String vinNumber;
+    private String owner;
+    private String powerSource;
 
-    String getBrand();
-    void setBrand(String brand);
+    public Vehicle() {}
 
-    String getModel();
-    void setModel(String model);
+    public Vehicle(String registrationNumber, String brand, String model, String vinNumber, String owner, String powerSource) {
+        this.registrationNumber = registrationNumber;
+        this.brand = brand;
+        this.model = model;
+        this.vinNumber = vinNumber;
+        this.owner = owner;
+        this.powerSource = powerSource;
+    }
+    @Override
+    public String getRegistrationNumber() { return registrationNumber; }
+    @Override
+    public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
 
-    String getVinNumber();
-    void setVinNumber(String vinNumber);
+    @Override
+    public String getBrand() { return brand; }
+    @Override
+    public void setBrand(String brand) { this.brand = brand; }
 
-    String getOwner();
-    void setOwner(String owner);
+    @Override
+    public String getModel() { return model; }
+    @Override
+    public void setModel(String model) { this.model = model; }
 
-    String getPowerSource();
-    void setPowerSource(String powerSource);
+    @Override
+    public String getVinNumber() { return vinNumber; }
+    @Override
+    public void setVinNumber(String vinNumber) { this.vinNumber = vinNumber; }
 
-    // Обслуживание
-    void refuel();
-    void repair();
-    void service();
+    @Override
+    public String getOwner() { return owner; }
+    @Override
+    public void setOwner(String owner) { this.owner = owner; }
 
-    // Техосмотр
-    void passTechnicalInspection();
+    @Override
+    public String getPowerSource() { return powerSource; }
+    @Override
+    public void setPowerSource(String powerSource) { this.powerSource = powerSource; }
 }

@@ -5,7 +5,10 @@ import chapter14.VariableA.ChatServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -17,69 +20,72 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChatClientTest {
-    private ChatServer server;
-    private ExecutorService executor;
-    private Socket clientSocket;
-    private PrintWriter out;
-    private Scanner in;
+    private ChatServer chatServer;
+    private Thread serverThread;
+    private ChatClient client;
 
     @BeforeEach
-    void setUp() {
-        // Запуск сервера в фоновом режиме
-        server = new ChatServer(1234);
-        executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
+    void setUp() throws IOException {
+        // Start a chat server in a separate thread
+        chatServer = new ChatServer(12345);
+        serverThread = new Thread(() -> {
             try {
-                server.start();
+                chatServer.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+        serverThread.start();
 
-        // Даем время серверу для старта
+        // Allow time for the server to start up
         try {
-            Thread.sleep(100); // В реальных условиях лучше использовать механизмы синхронизации
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Thread.currentThread().interrupt(); // Восстанавливаем статус прерывания
         }
 
-        // Подключаемся как клиент
-        try {
-            clientSocket = new Socket("localhost", 1234);
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new Scanner(clientSocket.getInputStream());
-        } catch (IOException e) {
-            fail("Ошибка подключения: " + e.getMessage());
-        }
+        // Initialize the client
+        client = new ChatClient("localhost", 12345);
+        client.connect();
     }
 
     @AfterEach
-    void tearDown() {
-        try {
-            if (clientSocket != null) {
-                clientSocket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    void tearDown() throws IOException {
+        // Close the client
+        client.disconnect();
+        // Stop the chat server
+        chatServer.stop();
+    }
+
+    @Test
+    void testSendMessageAndReceive() throws IOException {
+        String messageToSend = "Hello, World!";
+        client.sendMessage(messageToSend);
+
+        // We need to set up a temporary client handler to catch the broadcasted message
+        try (Socket socket = new Socket("localhost", 12345);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            String receivedMessage = in.readLine();
+            assertNotNull(receivedMessage);
+            assertTrue(receivedMessage.contains(messageToSend),
+                    "The received message should contain the sent message.");
         }
-        server.stop();
-        executor.shutdownNow();
     }
 
     @Test
-    void testClientConnection() {
-        assertTrue(clientSocket.isConnected(), "Клиент успешно подключен");
+    void testConnect() {
+        assertDoesNotThrow(() -> client.connect(), "Client should connect without throwing an exception.");
     }
 
     @Test
-    void testClientSendAndReceive() {
-        // Отправка сообщения от клиента
-        String testMessage = "Привет, сервер!";
-        out.println(testMessage);
+    void testDisconnect() {
+        assertDoesNotThrow(() -> client.disconnect(), "Client should disconnect without throwing an exception.");
+    }
 
-        // Ожидание приема сообщения на стороне клиента
-        String response = in.nextLine();
-        assertTrue(response.contains(testMessage), "Ожидаемое сообщение получено");
+    @Test
+    void testReceiveMessage() throws IOException {
+        chatServer.broadcastMessage("Test message from server");
+        String receivedMessage = client.receiveMessage();
+        assertEquals("Test message from server", receivedMessage, "The received message should match the sent message.");
     }
 }

@@ -54,7 +54,7 @@ public class ChatServer {
         clients.clear();
     }
 
-    void broadcastMessage(String message) {
+    public void broadcastMessage(String message) {
         for (ClientHandler client : clients) {
             client.sendMessage(message);
         }

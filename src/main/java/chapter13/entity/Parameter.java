@@ -1,10 +1,12 @@
-package chapter13.models;
+package chapter13.entity;
 
 public class Parameter {
     private int id;
     private String name;
     private String unit;
     private int paramGroupId;
+
+    public Parameter() { }
 
     public Parameter(String name, String unit, int paramGroupId) {
         this.name = name;

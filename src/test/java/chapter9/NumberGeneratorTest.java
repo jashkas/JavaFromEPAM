@@ -1,5 +1,6 @@
 package chapter9;
 
+import chapter9.service.NumberGenerator;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Locale;

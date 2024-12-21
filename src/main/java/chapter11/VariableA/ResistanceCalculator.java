@@ -13,7 +13,7 @@ public class ResistanceCalculator {
     public ResistanceCalculator(List<Double> currentMeasurements, List<Double> voltageMeasurements) {
         // Проверка, что списки имеют одинаковый размер
         if (currentMeasurements.size() != voltageMeasurements.size()) {
-            throw new IllegalArgumentException("Списки тока и напряжения должны иметь одинаковый размер.");
+            throw new IllegalArgumentException("Матрицы должны иметь одинаковый размер.");
         }
         this.currentMeasurements = currentMeasurements;
         this.voltageMeasurements = voltageMeasurements;
@@ -34,7 +34,7 @@ public class ResistanceCalculator {
 
         // Проверка на нулевую сумму квадратов токов, чтобы избежать деления на ноль
         if (sumII == 0) {
-            throw new ArithmeticException("Сумма квадратов измерений тока равна нулю, деление на ноль.");
+            throw new ArithmeticException("Сумма квадратов измерений матриц равна нулю, деление на ноль.");
         }
 
         // Возвращаем вычисленное сопротивление R = Σ(U_i * I_i) / Σ(I_i^2)

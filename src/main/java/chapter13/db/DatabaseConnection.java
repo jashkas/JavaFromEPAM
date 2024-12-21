@@ -7,10 +7,10 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
 
-    public static Connection getConnection() throws SQLException, ClassNotFoundException {
-        Class.forName ("org.h2.Driver");
+    public static Connection getConnection() throws SQLException {
+        //Class.forName ("org.h2.Driver");
 
-        String url = "jdbc:h2:~/testdb";
+        String url = "jdbc:h2:file:./data/testdb";
         String user = "sa";
         String password = ""; // пароль по умолчанию
 
@@ -22,16 +22,6 @@ public class DatabaseConnection {
     private static void createTablesIfNotExist(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             // SQL для создания таблиц, если они не существуют
-            stmt.execute("CREATE TABLE IF NOT EXISTS ProductGroup ("
-                    + "group_id INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "name VARCHAR(255) NOT NULL)");
-
-            stmt.execute("CREATE TABLE IF NOT EXISTS ParameterGroup ("
-                    + "param_group_id INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "name VARCHAR(255) NOT NULL, "
-                    + "product_group_id INT, "
-                    + "FOREIGN KEY (product_group_id) REFERENCES ProductGroup(group_id))");
-
             stmt.execute("CREATE TABLE IF NOT EXISTS Parameter ("
                     + "param_id INT PRIMARY KEY AUTO_INCREMENT, "
                     + "name VARCHAR(255) NOT NULL, "
@@ -44,6 +34,16 @@ public class DatabaseConnection {
                     + "name VARCHAR(255) NOT NULL, "
                     + "description TEXT, "
                     + "release_date DATE, "
+                    + "product_group_id INT, "
+                    + "FOREIGN KEY (product_group_id) REFERENCES ProductGroup(group_id))");
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS ProductGroup ("
+                    + "group_id INT PRIMARY KEY AUTO_INCREMENT, "
+                    + "name VARCHAR(255) NOT NULL)");
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS ParameterGroup ("
+                    + "param_group_id INT PRIMARY KEY AUTO_INCREMENT, "
+                    + "name VARCHAR(255) NOT NULL, "
                     + "product_group_id INT, "
                     + "FOREIGN KEY (product_group_id) REFERENCES ProductGroup(group_id))");
 

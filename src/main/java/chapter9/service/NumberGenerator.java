@@ -1,4 +1,4 @@
-package chapter9;
+package chapter9.service;
 
 import java.util.Locale;
 import java.util.Random;

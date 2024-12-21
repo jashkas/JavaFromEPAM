@@ -19,13 +19,13 @@ public class Tunnel {
     public void passTunnel(Train train) throws InterruptedException {
         // Пытаемся захватить доступ к первому туннелю
         if (tunnel1.tryAcquire(maxWaitTime, TimeUnit.MILLISECONDS)) {
-            System.out.println(train + " вошел в Туннель 1");
-            Thread.sleep(1000); // Поезд проходит через туннель
+            System.out.println(train + " прошел Туннель 1");
+            Thread.sleep(2000); // Поезд проходит через туннель
             // Освобождаем туннель после прохода
             tunnel1.release();
         } else if (tunnel2.tryAcquire(maxWaitTime, TimeUnit.MILLISECONDS)) {
-            System.out.println(train + " вошел в Туннель 2");
-            Thread.sleep(1000);
+            System.out.println(train + " прошел Туннель 2");
+            Thread.sleep(500);
             tunnel2.release();
         } else {
             System.out.println(train + " превысил максимальное время ожидания и был перенаправлен");

@@ -1,4 +1,4 @@
-package chapter13.models;
+package chapter13.entity;
 
 import java.util.List;
 

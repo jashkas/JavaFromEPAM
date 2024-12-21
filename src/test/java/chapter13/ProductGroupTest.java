@@ -1,7 +1,7 @@
 package chapter13;
 
 import chapter13.db.*;
-import chapter13.models.*;
+import chapter13.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.sql.Connection;

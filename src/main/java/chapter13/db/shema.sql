@@ -1,8 +1,6 @@
-CREATE TABLE Parameter (
-    param_id INT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    unit VARCHAR(50) NOT NULL,
-    param_group_id INT
+CREATE TABLE ProductGroup (
+    group_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Product (
@@ -14,18 +12,20 @@ CREATE TABLE Product (
     FOREIGN KEY (product_group_id) REFERENCES ProductGroup(group_id)
 );
 
+CREATE TABLE Parameter (
+    param_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    unit VARCHAR(50) NOT NULL,
+    param_group_id INT
+);
+
 CREATE TABLE ProductParameter (
     product_id INT,
     param_id INT,
-    value VARCHAR(255),
+    value_param VARCHAR(255),
     PRIMARY KEY (product_id, param_id),
     FOREIGN KEY (product_id) REFERENCES Product(product_id),
     FOREIGN KEY (param_id) REFERENCES Parameter(param_id)
-);
-
-CREATE TABLE ProductGroup (
-    group_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE ParameterGroup (

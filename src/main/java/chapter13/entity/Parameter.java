@@ -8,6 +8,11 @@ public class Parameter {
 
     public Parameter() { }
 
+    public Parameter(String name, String unit) {
+        this.name = name;
+        this.unit = unit;
+    }
+
     public Parameter(String name, String unit, int paramGroupId) {
         this.name = name;
         this.unit = unit;
@@ -44,5 +49,15 @@ public class Parameter {
 
     public void setParamGroupId(int paramGroupId) {
         this.paramGroupId = paramGroupId;
+    }
+
+    @Override
+    public String toString() {
+        return "Parameter{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", unit='" + unit + '\'' +
+                ", paramGroupId=" + paramGroupId +
+                '}';
     }
 }

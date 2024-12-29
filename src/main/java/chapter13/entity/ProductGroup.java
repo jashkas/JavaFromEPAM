@@ -7,6 +7,8 @@ public class ProductGroup {
     private String name;
     private List<Product> products;
 
+    public ProductGroup() { }
+
     public ProductGroup(String name, List<Product> products) {
         this.name = name;
         this.products = products;
@@ -34,5 +36,14 @@ public class ProductGroup {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductGroup{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", products=" + products +
+                '}';
     }
 }

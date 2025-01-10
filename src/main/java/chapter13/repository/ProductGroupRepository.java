@@ -1,5 +1,6 @@
 package chapter13.repository;
 
+import chapter13.entity.Parameter;
 import chapter13.entity.Product;
 import chapter13.entity.ProductGroup;
 import chapter13.db.DatabaseConnection;
@@ -70,6 +71,12 @@ public class ProductGroupRepository {
     }
 
     public static void delete(int id) throws SQLException {
+        // Сперва удаление всех продуктов данной группы
+        List<Product> products = ProductRepository.getByProductGroup(id);
+        for (Product product : products) {
+            ProductRepository.delete(product.getId());
+        }
+        // Удаление самой группы
         String sql = "DELETE FROM ProductGroup WHERE group_id = ?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);

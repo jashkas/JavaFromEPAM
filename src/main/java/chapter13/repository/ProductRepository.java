@@ -1,5 +1,6 @@
 package chapter13.repository;
 
+import chapter13.entity.Parameter;
 import chapter13.entity.Product;
 import chapter13.db.DatabaseConnection;
 import chapter13.entity.ProductParameter;
@@ -55,52 +56,16 @@ public class ProductRepository {
 
     public static Product getById(int id) throws SQLException {
         String sql = "SELECT * FROM Product WHERE product_id = ?";
-//        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-//            stmt.setInt(1, id);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                if (rs.next()) {
-//                    Product product = new Product();
-//                    int productId = rs.getInt("product_id");
-//                    product.setId(productId);
-//                    product.setName(rs.getString("name"));
-//                    product.setDescription(rs.getString("description"));
-//                    product.setReleaseDate(rs.getDate("release_date").toLocalDate());
-//                    product.setProductGroupId(rs.getInt("product_group_id"));
-//                    // Получение списка параметров данной продукции
-//                    List<ProductParameter> parameters = ProductParameterRepository.getById(productId);
-//                    product.setParameters(parameters);
-//                    return product;
-//                }
-//            }
-//        }
         return get(sql, id).get(0);
     }
 
     public static List<Product> getByGroupId(int groupId) throws SQLException {
         String sql = "SELECT * FROM Product WHERE product_group_id = ?";
-
-//        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-//            stmt.setInt(1, groupId);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                while (rs.next()) {
-//                    Product product = new Product();
-//                    int productId = rs.getInt("product_id");
-//                    product.setId(productId);
-//                    product.setName(rs.getString("name"));
-//                    product.setDescription(rs.getString("description"));
-//                    product.setReleaseDate(rs.getDate("release_date").toLocalDate());
-//                    product.setProductGroupId(rs.getInt("product_group_id"));
-//                    // Получение списка параметров данной продукции
-//                    List<ProductParameter> parameters = ProductParameterRepository.getById(productId);
-//                    product.setParameters(parameters);
-//                    products.add(product);
-//                }
-//            }
-//        }
         return get(sql, groupId);
     }
 
     public static List<Product> getWithoutParameter(int parameterId) throws SQLException {
+        // Продукция не содержащая заданного параметра.
         String sql = "SELECT DISTINCT pr.product_id, pr.name, pr.description, pr.release_date, pr.product_group_id " +
                 "FROM Product pr " +
                 "LEFT JOIN ProductParameter pp ON pr.product_id = pp.product_id " +
@@ -108,28 +73,15 @@ public class ProductRepository {
         return get(sql, parameterId);
     }
 
+    public static List<Product> getByProductGroup(int productGroup) throws SQLException {
+        String sql = "SELECT p.product_id, p.name, p.description, p.release_date, p.product_group_id" +
+                " FROM Product p" +
+                " WHERE p.product_group_id = ?;";
+        return get(sql, productGroup);
+    }
+
     public static List<Product> getAll() throws SQLException {
-//        List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM Product";
-//
-//        try (Connection conn = DatabaseConnection.getConnection(); Statement stmt = conn.createStatement();
-//             ResultSet rs = stmt.executeQuery(sql)) {
-//            while (rs.next()) {
-//                Product product = new Product();
-//                int productId = rs.getInt("product_id");
-//                product.setId(productId);
-//                product.setId(rs.getInt("product_id"));
-//                product.setName(rs.getString("name"));
-//                product.setDescription(rs.getString("description"));
-//                product.setReleaseDate(rs.getDate("release_date").toLocalDate());
-//                product.setProductGroupId(rs.getInt("product_group_id"));
-//                // Получение списка параметров данной продукции
-//                List<ProductParameter> parameters = ProductParameterRepository.getById(productId);
-//                product.setParameters(parameters);
-//                products.add(product);
-//            }
-//        }
-//        return products;
         return get(sql, -1);
     }
 
@@ -150,6 +102,29 @@ public class ProductRepository {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
+        }
+    }
+
+    public static void deleteByParameters(List<Parameter> parameters) throws SQLException {
+        String deleteProductParameterSQL = "DELETE FROM ProductParameter WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
+        String deleteProductSQL = "DELETE FROM Product WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            for (Parameter parameter: parameters) {
+                try (PreparedStatement stmt = conn.prepareStatement(deleteProductParameterSQL); PreparedStatement stmt2 = conn.prepareStatement(deleteProductSQL)) {
+                    // Установка параметров запроса
+                    stmt.setInt(1, parameter.getId());
+                    stmt2.setInt(1, parameter.getId());
+
+                    stmt.executeUpdate();  // выполнение запроса удаления связей из ProductParameter
+                    stmt2.executeUpdate();  // удаление продуктов
+                }
+            }
+        }
+    }
+
+    public static void show(List<Product> products) {
+        for (Product product : products) {
+            System.out.println(product);
         }
     }
 }

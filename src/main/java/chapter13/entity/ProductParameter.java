@@ -1,5 +1,9 @@
 package chapter13.entity;
 
+import chapter13.repository.ParameterRepository;
+
+import java.sql.SQLException;
+
 public class ProductParameter {
     private String nameParam;
     private String unitParam;
@@ -10,10 +14,21 @@ public class ProductParameter {
 
     public ProductParameter() { }
 
-    public ProductParameter(String nameParam, String unitParam, String valueParam) {
+    public ProductParameter(String nameParam, String unitParam, int productId, int paramId, String valueParam) {
         this.nameParam = nameParam;
         this.unitParam = unitParam;
+        this.productId = productId;
+        this.paramId = paramId;
         this.valueParam = valueParam;
+    }
+
+    public ProductParameter(int productId, int paramId, String valueParam) throws SQLException {
+        this.productId = productId;
+        this.paramId = paramId;
+        this.valueParam = valueParam;
+        Parameter parameter = ParameterRepository.getById(paramId);
+        this.nameParam = parameter.getName();
+        this.unitParam = parameter.getUnit();
     }
 
     public String getNameParam() {

@@ -3,7 +3,7 @@ package chapter13.entity;
 public class Parameter {
     private int id;
     private String name;
-    private String unit;
+    private String unit;  // единица измерения
     private int paramGroupId;
 
     public Parameter() { }

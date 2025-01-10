@@ -1095,3 +1095,75 @@ Column "release_date" not found [42122-224]
 	at chapter13.repository.ProductRepository.get(ProductRepository.java:44)
 	at chapter13.repository.ProductRepository.getWithoutParameter(ProductRepository.java:108)
 	at chapter13.Main.main(Main.java:26)
+2025-01-05 16:02:51.712004+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Столбец "product_group_id" не найден
+Column "product_group_id" not found [42122-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.jdbc.JdbcResultSet.getColumnIndex(JdbcResultSet.java:3492)
+	at org.h2.jdbc.JdbcResultSet.getInt(JdbcResultSet.java:337)
+	at chapter13.repository.ProductRepository.get(ProductRepository.java:45)
+	at chapter13.repository.ProductRepository.getByProductGroup(ProductRepository.java:79)
+	at chapter13.Main.main(Main.java:32)
+2025-01-05 16:03:39.167284+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Столбец "product_group_id" не найден
+Column "product_group_id" not found [42122-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.jdbc.JdbcResultSet.getColumnIndex(JdbcResultSet.java:3492)
+	at org.h2.jdbc.JdbcResultSet.getInt(JdbcResultSet.java:337)
+	at chapter13.repository.ProductRepository.get(ProductRepository.java:45)
+	at chapter13.repository.ProductRepository.getByProductGroup(ProductRepository.java:79)
+	at chapter13.Main.main(Main.java:32)
+2025-01-11 01:12:35.413392+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Параметр "#5" не установлен
+Parameter "#5" is not set; SQL statement:
+DELETE FROM ProductParameter WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ) [90012-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.expression.Parameter.checkSet(Parameter.java:75)
+	at org.h2.command.Prepared.checkParameters(Prepared.java:207)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:159)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.command.CommandList.update(CommandList.java:65)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+	at org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+	at chapter13.repository.ProductRepository.deleteByParameters(ProductRepository.java:125)
+	at chapter13.Main.main(Main.java:88)
+2025-01-11 01:27:38.523400+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "PP" не найдена
+Table "PP" not found; SQL statement:
+DELETE pp, p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;DELETE pp, p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?; [42102-224]
+2025-01-11 01:35:46.094098+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "DELETE ProductParameter pp[*], Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;DELETE ProductParameter pp, Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;"
+Syntax error in SQL statement "DELETE ProductParameter pp[*], Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;DELETE ProductParameter pp, Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;"; SQL statement:
+DELETE ProductParameter pp, Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?;DELETE ProductParameter pp, Product p FROM ProductParameter pp JOIN Product p ON pp.product_id = p.product_id WHERE pp.param_id = ?; [42000-224]
+2025-01-11 01:55:34.805454+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Недопустимое значение "2" для параметра "parameterIndex"
+Invalid value "2" for parameter "parameterIndex" [90008-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:298)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1408)
+	at org.h2.jdbc.JdbcPreparedStatement.setInt(JdbcPreparedStatement.java:372)
+	at chapter13.repository.ProductRepository.deleteByParameters(ProductRepository.java:123)
+	at chapter13.Main.main(Main.java:101)
+2025-01-11 01:57:19.828924+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Недопустимое значение "2" для параметра "parameterIndex"
+Invalid value "2" for parameter "parameterIndex" [90008-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.getInvalidValueException(DbException.java:298)
+	at org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1408)
+	at org.h2.jdbc.JdbcPreparedStatement.setInt(JdbcPreparedStatement.java:372)
+	at chapter13.repository.ProductRepository.deleteByParameters(ProductRepository.java:123)
+	at chapter13.Main.main(Main.java:101)

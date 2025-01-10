@@ -47,8 +47,6 @@ public class DatabaseTest {
     @Test
     public void testParameterGroupTable() throws Exception {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM ParameterGroup WHERE param_group_id = 29");
-            stmt.execute("DELETE FROM ParameterGroup WHERE param_group_id = 30");
             ResultSet rs = stmt.executeQuery("SELECT * FROM ParameterGroup");
             while (rs.next()) {
                 String result = "param_group_id:" + rs.getInt("param_group_id")

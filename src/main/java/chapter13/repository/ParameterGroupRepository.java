@@ -91,6 +91,21 @@ public class ParameterGroupRepository {
         }
     }
 
+    public static void updateProductGroup(List<ParameterGroup> parameterGroups, int productGroupId) throws SQLException {
+        // Запрос
+        String sql = "UPDATE ParameterGroup SET product_group_id = ? WHERE param_group_id IN (" +
+                "?, ".repeat(parameterGroups.size() - 1) + "?" +
+                ");";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, productGroupId);
+            // ind - индекс параметра sql
+            for (int i = 0, ind = 2; i < parameterGroups.size(); i++, ind++) {
+                stmt.setInt(ind, parameterGroups.get(i).getId());
+            }
+            stmt.executeUpdate();
+        }
+    }
+
     public static void delete(int id) throws SQLException {
         // Удаление всех параметров данной группы
         List<Parameter> parameters = ParameterRepository.getParametersByParamGroupId(id);
@@ -102,6 +117,12 @@ public class ParameterGroupRepository {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
+        }
+    }
+
+    public static void show(List<ParameterGroup> parameterGroups) {
+        for (ParameterGroup parameterGroup : parameterGroups) {
+            System.out.println(parameterGroup);
         }
     }
 }

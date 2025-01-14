@@ -7,7 +7,9 @@ import chapter13.entity.ProductParameter;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProductRepository {
     public static void create(Product product) {
@@ -106,17 +108,49 @@ public class ProductRepository {
     }
 
     public static void deleteByParameters(List<Parameter> parameters) throws SQLException {
-        String deleteProductParameterSQL = "DELETE FROM ProductParameter WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
-        String deleteProductSQL = "DELETE FROM Product WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            for (Parameter parameter: parameters) {
-                try (PreparedStatement stmt = conn.prepareStatement(deleteProductParameterSQL); PreparedStatement stmt2 = conn.prepareStatement(deleteProductSQL)) {
-                    // Установка параметров запроса
-                    stmt.setInt(1, parameter.getId());
-                    stmt2.setInt(1, parameter.getId());
+//        String deleteProductParameterSQL = "DELETE FROM ProductParameter WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
+//        String deleteProductSQL = "DELETE FROM Product WHERE product_id IN ( SELECT product_id FROM ProductParameter WHERE param_id = ? ); ";
+        Set<Integer> productIds = new HashSet<>();  // Идентификаторы продуктов
 
-                    stmt.executeUpdate();  // выполнение запроса удаления связей из ProductParameter
-                    stmt2.executeUpdate();  // удаление продуктов
+        // Собираем все product_id для указанных параметров
+        String selectProductIdsSQL = "SELECT product_id FROM ProductParameter WHERE param_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            for (Parameter parameter : parameters) {
+                try (PreparedStatement stmt = conn.prepareStatement(selectProductIdsSQL)) {
+                    stmt.setInt(1, parameter.getId());
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        productIds.add(rs.getInt("product_id"));
+                    }
+                }
+            }
+
+            // Удаляем связи в ProductParameter
+            if (!productIds.isEmpty()) {
+                String deleteProductParameterSQL = "DELETE FROM ProductParameter WHERE product_id IN (" +
+                        "?, ".repeat(productIds.size() - 1) + "?" +
+                        ")";
+
+                try (PreparedStatement stmt = conn.prepareStatement(deleteProductParameterSQL)) {
+                    int index = 1;
+                    for (Integer id : productIds) {
+                        stmt.setInt(index++, id);
+                    }
+                    stmt.executeUpdate();
+                }
+
+                // Удаляем продукты в Product
+                String deleteProductSQL = "DELETE FROM Product WHERE product_id IN ("+
+                        "?, ".repeat(productIds.size() - 1) + "?" +
+                        ")";
+
+                try (PreparedStatement stmt2 = conn.prepareStatement(deleteProductSQL)) {
+                    int index = 1;
+                    for (Integer id : productIds) {
+                        stmt2.setInt(index++, id);
+                    }
+                    stmt2.executeUpdate();
                 }
             }
         }

@@ -47,6 +47,7 @@ public class DatabaseTest {
     @Test
     public void testParameterGroupTable() throws Exception {
         try (Statement stmt = connection.createStatement()) {
+            stmt.execute("UPDATE ParameterGroup SET product_group_id = 7 WHERE param_group_id = 9");
             ResultSet rs = stmt.executeQuery("SELECT * FROM ParameterGroup");
             while (rs.next()) {
                 String result = "param_group_id:" + rs.getInt("param_group_id")

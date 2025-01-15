@@ -1,39 +1,41 @@
 package chapter14.VariableA;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
 
 public class ChatClient {
-    private final String hostname;
-    private final int port;
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private static final int PORT = 8071;
+    private static final String SERVER_ADDRESS = "127.0.0.1";
 
-    public ChatClient(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
-    }
+    public static void main(String[] args) {
+        try (Socket socket = new Socket(SERVER_ADDRESS, PORT);
+             PrintStream out = new PrintStream(socket.getOutputStream());
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in))) {
 
-    // Метод подключения к серверу
-    public void connect() throws IOException {
-        socket = new Socket(hostname, port);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
-    }
+            // Поток для получения сообщений от сервера
+            Thread receiverThread = new Thread(() -> {
+                try {
+                    String serverMessage;
+                    while ((serverMessage = in.readLine()) != null) {
+                        System.out.println(serverMessage);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Подключение закрыто.");
+                }
+            });
+            receiverThread.start();
 
-    // Метод для отправки сообщения
-    public void sendMessage(String message) {
-        out.println(message);
-    }
-
-    // Метод для получения сообщений
-    public String receiveMessage() throws IOException {
-        return in.readLine();
-    }
-
-    // Метод для закрытия соединения
-    public void disconnect() throws IOException {
-        socket.close();
+            // Отправка сообщений на сервер
+            String userInput;
+            while ((userInput = consoleReader.readLine()) != null) {
+                out.println(userInput);
+            }
+        } catch (IOException e) {
+            System.err.println("Не удается подключиться к серверу: " + e.getMessage());
+        }
     }
 }

@@ -1,49 +1,42 @@
 package chapter14;
 
-import chapter14.VariableA.ChatServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import chapter14.VariableA.*;
+import org.junit.jupiter.api.*;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.*;
+import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChatServerTest {
-    private ChatServer server;
-    private ExecutorService executor;
-
-    @BeforeEach
-    void setUp() {
-        server = new ChatServer(1234);
-        executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            try {
-                server.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        // Дождемся запуска сервера перед продолжением тестов
-        try {
-            Thread.sleep(100); // В реальных условиях лучше использовать механизмы синхронизации
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt(); // Восстанавливаем статус прерывания
-        }
-    }
-
-    @AfterEach
-    void tearDown() {
-        server.stop();
-        executor.shutdownNow();
-    }
+    private static final int TEST_PORT = 8071;
 
     @Test
-    void testServerCreation() {
-        assertNotNull(server);
+    @DisplayName("Тест: Проверка подключения клиента")
+    void testClientConnection() throws IOException {
+        Thread serverThread = new Thread(() -> ChatServer.main(new String[]{}));
+        serverThread.setDaemon(true);
+        serverThread.start();
+
+        // Ожидаем инициализацию сервера
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            fail("Server initialization interrupted.");
+        }
+
+        try (Socket clientSocket = new Socket("127.0.0.1", TEST_PORT);
+             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+            // Проверка сообщения о вводе имени клиента
+            String serverMessage = in.readLine();
+            assertEquals("Введите ваше имя:", serverMessage);
+
+            // Отправляем имя пользователя
+            out.println("TestClient");
+            serverMessage = in.readLine();
+            assertTrue(serverMessage.contains("TestClient вошел в чат."));
+        }
     }
 }

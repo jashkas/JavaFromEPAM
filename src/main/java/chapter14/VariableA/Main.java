@@ -1,58 +1,32 @@
 package chapter14.VariableA;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class Main {
     public static void main(String[] args) {
-        // Сервер
-        ChatServer server = new ChatServer(1234);
-        // Запуск сервера
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            try {
-                server.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // Создаем и запускаем сервер в отдельном потоке
+        Thread serverThread = new Thread(() -> {
+            ChatServer.main(new String[]{});
         });
+        serverThread.setDaemon(true); // Поток завершится при закрытии основного процесса
+        serverThread.start();
 
-        // Даем время серверу для старта
         try {
-            Thread.sleep(100); // В реальных условиях лучше использовать механизмы синхронизации
+            // Ждем, чтобы сервер завершил инициализацию
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Thread.currentThread().interrupt(); // Восстанавливаем статус прерывания
         }
 
-        Socket clientSocket = null;
-        // Подключаемся как клиент
-        try {
-            clientSocket = new Socket("localhost", 1234);
-        } catch (IOException e) {
-            System.out.println("Ошибка подключения: " + e.getMessage());
-        }
+        // Создаем и подключаем двух клиентов в отдельных потоках
+        Thread client1Thread = new Thread(() -> {
+            System.out.println("Поток клиента 1...");
+            ChatClient.main(new String[]{});
+        });
+        Thread client2Thread = new Thread(() -> {
+            System.out.println("Поток клиента 2...");
+            ChatClient.main(new String[]{});
+        });
 
-
-
-
-
-
-
-
-        // Закрытие и отключение
-        try {
-            if (clientSocket != null) {
-                clientSocket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        server.stop();
-        executor.shutdownNow();
+        client1Thread.start();
+        client2Thread.start();
     }
 }

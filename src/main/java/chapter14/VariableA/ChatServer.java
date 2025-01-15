@@ -1,68 +1,58 @@
 package chapter14.VariableA;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 
 public class ChatServer {
-    private final int port;
-    private final List<ClientHandler> clients = new CopyOnWriteArrayList<>();
-    private ServerSocket serverSocket;
-    private volatile boolean running = false;
+    private static final int PORT = 8071;
+    private static List<ChatServer.ClientHandler> clients = new ArrayList<>();
 
-    public ChatServer(int port) {
-        this.port = port;
-    }
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Сервер чата запущен на порту " + PORT);
 
-    public void start() throws IOException {
-        serverSocket = new ServerSocket(port);
-        running = true;
-        while (running) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                if (!running) {
-                    break;
-                }
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+            while (true) {
+                Socket clientSocket = serverSocket.accept(); // ожидание подключения
+                System.out.println("Подключился новый клиент: " + clientSocket.getInetAddress().getHostName());
+
+                // Создаем обработчик для нового клиента
+                ChatServer.ClientHandler clientHandler = new ChatServer.ClientHandler(clientSocket);
                 clients.add(clientHandler);
-                new Thread(clientHandler).start();
-                broadcastMessage("Клиент подключился: " + clientSocket.getInetAddress());
-            } catch (IOException e) {
-                if (running) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
+                clientHandler.start(); // стартуем поток
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Закрываем все клиентские соединения
-        for (ClientHandler client : clients) {
-            client.closeConnection();
-        }
-        clients.clear();
-    }
-
-    public void broadcastMessage(String message) {
-        for (ClientHandler client : clients) {
-            client.sendMessage(message);
+            System.err.println("Ошибка сервера: " + e.getMessage());
         }
     }
 
-    private class ClientHandler implements Runnable {
-        private final Socket socket;
-        private PrintWriter out;
+    // Метод для отправки сообщения всем клиентам
+    public static synchronized void broadcastMessage(String message, ChatServer.ClientHandler sender) {
+        for (ChatServer.ClientHandler client : clients) {
+            if (client != sender) { // не отправляем сообщение самому отправителю
+                client.sendMessage(message);
+            }
+        }
+    }
+
+    // Метод удаления клиента из списка при его отключении
+    public static synchronized void removeClient(ChatServer.ClientHandler clientHandler) {
+        clients.remove(clientHandler);
+        System.out.println("Клиент отключился: " + clientHandler.getClientName());
+    }
+
+    // Класс для обработки клиента
+    static class ClientHandler extends Thread {
+        private Socket socket;
+        private PrintStream out;
+        private BufferedReader in;
+        private String clientName;
 
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -71,36 +61,41 @@ public class ChatServer {
         @Override
         public void run() {
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
+                out = new PrintStream(socket.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    broadcastMessage("Сообщение от " + socket.getInetAddress() + ": " + inputLine);
+                // Получение имени клиента
+                out.println("Введите ваше имя:");
+                clientName = in.readLine();
+                System.out.println(clientName + " вошел в чат.");
+                broadcastMessage(clientName + " вошел в чат.", this);
+
+                // Чтение сообщений клиента и пересылка их другим
+                String message;
+                while ((message = in.readLine()) != null) {
+                    System.out.println(clientName + ": " + message);
+                    broadcastMessage(clientName + ": " + message, this);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Ошибка подключения к клиенту: " + e.getMessage());
             } finally {
-                closeConnection();
-            }
-        }
-
-        void closeConnection() {
-            try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
+                try {
+                    if (socket != null) socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                clients.remove(this);
-                broadcastMessage("Клиент отключился: " + socket.getInetAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+                ChatServer.removeClient(this); // Удаляем клиента из списка
+                broadcastMessage(clientName + " покинул чат.", this);
             }
         }
 
-        void sendMessage(String message) {
-            if (out != null) {
-                out.println(message);
-            }
+        // Отправка сообщения клиенту
+        public void sendMessage(String message) {
+            out.println(message);
+        }
+
+        public String getClientName() {
+            return clientName;
         }
     }
 }

@@ -1,4 +1,4 @@
-package chapter14;
+package chapter14.VariableA;
 
 import org.junit.jupiter.api.*;
 
